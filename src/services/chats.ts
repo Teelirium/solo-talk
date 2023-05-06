@@ -13,7 +13,11 @@ async function getChats() {
 
 export const chatsQueryKey = [key];
 export const useChatsQuery = () =>
-  useQuery({ queryKey: chatsQueryKey, queryFn: getChats, staleTime: 10 * 60 * 1000 });
+  useQuery({
+    queryKey: chatsQueryKey,
+    queryFn: getChats,
+    // staleTime: 10 * 60 * 1000
+  });
 
 async function addChat(chat: ChatFormDto) {
   const chats = await getChats();
