@@ -24,12 +24,19 @@ export default function Login() {
   });
 
   return (
-    <main>
-      <h1>Введите имя пользователя</h1>
-      <form onSubmit={onSubmit}>
-        <input type='text' {...register('username')} />
-        <button type='submit'>Войти</button>
-      </form>
-    </main>
+    <>
+      <main className='relative layout flex flex-col p-4 gap-2 justify-center'>
+        <h1>Введите имя пользователя</h1>
+        <form onSubmit={onSubmit} className='flex flex-col gap-2'>
+          <input type='text' placeholder='...' {...register('username')} className='input' />
+          <button type='submit' className='btn btn-primary'>
+            Войти
+          </button>
+        </form>
+      </main>
+      <span className='w-full h-full fixed flex justify-center items-center'>
+        <img className='animate-bounce' src={'/kotohime-pet.gif'} />
+      </span>
+    </>
   );
 }

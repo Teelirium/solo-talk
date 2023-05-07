@@ -1,0 +1,11 @@
+.pulse {
+  animation: 1s ease pulse;
+}
+
+@keyframes pulse {
+  0% {
+    @apply bg-orange-300;
+  }
+  100% {
+  }
+}

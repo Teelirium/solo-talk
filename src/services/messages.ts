@@ -26,11 +26,13 @@ async function sendMessage({
   author,
   content,
   image,
+  quotedMessage,
 }: {
   chatId: string;
   author: string;
   content: string;
   image?: string;
+  quotedMessage?: string;
 }) {
   await wait(300);
   const messages = await getMessages(chatId);
@@ -39,6 +41,7 @@ async function sendMessage({
     content,
     author,
     image,
+    quotedMessage,
   };
   messages.unshift(newMessage);
   localStorage.setItem(getKey(chatId), JSON.stringify(messages));
@@ -66,7 +69,7 @@ export const useSendMessageMutation = (onSuccess?: () => void) => {
     },
 
     async onSettled(_, __, vars) {
-      await queryClient.invalidateQueries(messagesQueryKey(vars.chatId));
+      // await queryClient.invalidateQueries(messagesQueryKey(vars.chatId));
     },
   });
 };
