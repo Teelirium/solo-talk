@@ -11,10 +11,17 @@ body {
   scrollbar-width: thin;
 }
 
+html,
+body,
 #root {
   width: 100%;
-  max-width: 400px;
-  min-height: 100vh;
+  height: 100%;
+  overflow: hidden;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
 }
 
 img {

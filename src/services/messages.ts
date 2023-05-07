@@ -6,6 +6,7 @@ import { v4 } from 'uuid';
 const getKey = (id: string) => `chat-${id}`;
 
 async function getMessages(chatId: string) {
+  await wait(200);
   const messages = messageDtoSchema
     .array()
     .parse(JSON.parse(localStorage.getItem(getKey(chatId)) ?? '[]'));
@@ -31,7 +32,7 @@ async function sendMessage({
   content: string;
   image?: string;
 }) {
-  await wait(1000);
+  await wait(300);
   const messages = await getMessages(chatId);
   const newMessage = {
     id: v4(),

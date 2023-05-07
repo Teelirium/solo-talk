@@ -1,10 +1,12 @@
 import { ChatFormDto, chatRecordDtoSchema } from '@/dto/chatDto';
+import { wait } from '@/util/wait';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { v4 } from 'uuid';
 
 const key = 'chats';
 
 async function getChats() {
+  await wait(200);
   const chats = chatRecordDtoSchema
     .default({})
     .parse(JSON.parse(localStorage.getItem(key) ?? '{}'));

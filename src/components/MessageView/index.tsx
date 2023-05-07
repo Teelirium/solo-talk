@@ -10,7 +10,7 @@ export default function MessageView({ message }: Props) {
   return (
     <li>
       <h3
-        className={`inline p-1 ${
+        className={`inline ${
           (getUser() ?? '') === message.author ? 'text-accent font-bold' : 'text-secondary'
         }`}
       >

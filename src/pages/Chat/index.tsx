@@ -55,11 +55,11 @@ export default function Chat() {
     mutate({ chatId, content: data.content, image, author: getUser() ?? '' });
   });
 
-  const showLoading = messagesQuery.isFetching || chatsQuery.isFetching;
+  const showLoading = messagesQuery.isLoading || chatsQuery.isLoading;
 
   return (
     <>
-      <header className='fixed layout top-0 h-16 p-2 flex justify-between items-center'>
+      <header className='relative layout h-16 bg-[color:var(--bg-color)] p-2 flex justify-between items-center z-10'>
         <Link to={'/'} className='w-1/4'>
           <svg
             xmlns='http://www.w3.org/2000/svg'
@@ -74,36 +74,32 @@ export default function Chat() {
             />
           </svg>
         </Link>
-        <h1 className='w-1/2 flex justify-center'>{chat?.title}</h1>
+        <h1 className='w-1/2 flex justify-center'>{chat?.title ?? ''}</h1>
         <h2 className='w-1/4 flex justify-end overflow-hidden max-h-full text-ellipsis whitespace-nowrap'>
-          <b>{getUser() ?? ''}</b>
+          {getUser() ?? ''}
         </h2>
       </header>
-      <main className='absolute layout top-16 bottom-44 flex flex-col justify-end gap-4 p-2'>
-        {showLoading && <p>Загрузка...</p>}
-        {chat && messages && (
-          <>
-            <ul className='overflow-y-auto flex flex-col-reverse h-full'>
-              {sendMessageMutation.isLoading && <li>Отправляем сообщение...</li>}
-              {messages.map((message) => (
-                <MessageView key={message.id} message={message} />
-              ))}
-            </ul>
-          </>
-        )}
+      <main className='relative layout gap-4 p-2 flex flex-col overflow-hidden'>
+        <ul className='flex flex-col-reverse overflow-y-auto h-screen p-2'>
+          {showLoading && <li>Загрузка...</li>}
+          {sendMessageMutation.isLoading && <li>Отправляем сообщение...</li>}
+          {chat &&
+            messages &&
+            messages.map((message) => <MessageView key={message.id} message={message} />)}
+        </ul>
+        <form onSubmit={onSubmit} className='flex flex-col gap-2 p-2'>
+          <input
+            type='text'
+            placeholder={`Написать в ${chat?.title ?? ''}`}
+            className='input input-bordered w-full'
+            {...register('content')}
+          />
+          <input type='file' {...register('image')} accept='image/*' className='file-input' />
+          <button type='submit' className='btn btn-primary self-end'>
+            Отправить
+          </button>
+        </form>
       </main>
-      <form onSubmit={onSubmit} className='fixed layout bottom-0 flex flex-col gap-2 h-44 p-2'>
-        <input
-          type='text'
-          placeholder={`Написать в ${chat?.title}`}
-          className='input input-bordered w-full max-h-24'
-          {...register('content')}
-        />
-        <input type='file' {...register('image')} accept='image/*' className='file-input' />
-        <button type='submit' className='btn btn-primary self-end'>
-          Отправить
-        </button>
-      </form>
     </>
   );
 }
