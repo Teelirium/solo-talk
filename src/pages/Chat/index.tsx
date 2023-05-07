@@ -1,5 +1,4 @@
 import MessageView from '@/components/MessageView';
-import UserView from '@/components/UserView';
 import { MessageFormDto, messageFormDtoSchema } from '@/dto/messageDto';
 import { useChatsQuery } from '@/services/chats';
 import { useMessagesQuery, useSendMessageMutation } from '@/services/messages';
@@ -60,7 +59,7 @@ export default function Chat() {
 
   return (
     <>
-      <header className='sticky top-0 p-2 flex justify-between items-center h-16'>
+      <header className='fixed layout top-0 h-16 p-2 flex justify-between items-center'>
         <Link to={'/'} className='w-1/4'>
           <svg
             xmlns='http://www.w3.org/2000/svg'
@@ -76,28 +75,28 @@ export default function Chat() {
           </svg>
         </Link>
         <h1 className='w-1/2 flex justify-center'>{chat?.title}</h1>
-        <span className='w-1/4 flex justify-start overflow-hidden max-h-full text-ellipsis whitespace-nowrap'>
-          <UserView user={getUser() ?? ''} />
-        </span>
+        <h2 className='w-1/4 flex justify-end overflow-hidden max-h-full text-ellipsis whitespace-nowrap'>
+          <b>{getUser() ?? ''}</b>
+        </h2>
       </header>
-      <main className='flex flex-col justify-around gap-4'>
+      <main className='absolute layout top-16 bottom-44 flex flex-col justify-end gap-4 p-2'>
         {showLoading && <p>Загрузка...</p>}
         {chat && messages && (
           <>
-            <ul className='max-h-full overflow-y-auto flex flex-col-reverse'>
+            <ul className='overflow-y-auto flex flex-col-reverse h-full'>
+              {sendMessageMutation.isLoading && <li>Отправляем сообщение...</li>}
               {messages.map((message) => (
                 <MessageView key={message.id} message={message} />
               ))}
             </ul>
-            {sendMessageMutation.isLoading && <div>Отправляем сообщение...</div>}
           </>
         )}
       </main>
-      <form onSubmit={onSubmit} className='fixed w-full bottom-0 self-center flex flex-col gap-2'>
+      <form onSubmit={onSubmit} className='fixed layout bottom-0 flex flex-col gap-2 h-44 p-2'>
         <input
           type='text'
           placeholder={`Написать в ${chat?.title}`}
-          className='input w-full max-h-24 resize-vertical'
+          className='input input-bordered w-full max-h-24'
           {...register('content')}
         />
         <input type='file' {...register('image')} accept='image/*' className='file-input' />

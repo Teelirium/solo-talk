@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.layout {
+  @apply w-full max-w-md left-1/2 -translate-x-1/2;
+}
+
 body {
   margin: 0;
   scrollbar-width: thin;
@@ -11,7 +15,6 @@ body {
   width: 100%;
   max-width: 400px;
   min-height: 100vh;
-  margin: 0 auto;
 }
 
 img {
@@ -34,14 +37,18 @@ img {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    --txt-color: #213547;
+    color: var(--txt-color);
+    --bg-color: #ebebeb;
+    background-color: var(--bg-color);
   }
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #242424;
+    --txt-color: rgba(255, 255, 255, 0.87);
+    color: var(--txt-color);
+    --bg-color: #242424;
+    background-color: var(--bg-color);
   }
 }

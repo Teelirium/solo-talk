@@ -10,13 +10,13 @@ export default function MessageView({ message }: Props) {
   return (
     <li>
       <h3
-        className={`inline ${
+        className={`inline p-1 ${
           (getUser() ?? '') === message.author ? 'text-accent font-bold' : 'text-secondary'
         }`}
       >
         {message.author}
       </h3>
-      <Twemoji className='text-md' svg>
+      <Twemoji className='text-md p-1' svg>
         {message.content || <>&nbsp;</>}
       </Twemoji>
       <img src={message.image} className='max-h-48 block' />
