@@ -23,9 +23,18 @@ export default function MessageView({
   return (
     <li
       id={message.id}
-      className={`group transition-colors px-1 ${highlight ? 'bg-primary' : ''}
-    ${pulse ? 'pulse' : ''}`}
+      className={`group px-1 text-lg break-words transition-colors bg-opacity-40 ${
+        highlight ? 'bg-blue-400' : ''
+      } ${pulse ? 'pulse' : ''}`}
     >
+      {quotedMessage && (
+        <blockquote
+          className='block text-green-500 dark:text-green-400'
+          onClick={onQuotedMessageClick}
+        >
+          &gt;{quotedMessage.author}: "{quotedMessage.content}"
+        </blockquote>
+      )}
       <h3
         className={`inline ${
           (getUser() ?? '') === message.author ? 'text-accent font-bold' : 'text-secondary'
@@ -33,20 +42,17 @@ export default function MessageView({
       >
         {message.author}
       </h3>
-      <Twemoji svg className='text-md p-1 flex-1'>
-        {message.content || <>&nbsp;</>}
-      </Twemoji>
+      <span onClick={onQuoteButtonClick}>
+        <Twemoji svg className='text-md p-1 flex-1'>
+          {message.content || <>&nbsp;</>}
+        </Twemoji>
+      </span>
       <button
         onClick={onQuoteButtonClick}
-        className='inline text-transparent right-0 group-hover:text-gray-400 group-active:text-gray-400 transition-colors'
+        className='inline opacity-70 text-transparent right-0 group-hover:text-[color:var(--txt-color)] group-active:text-[color:var(--txt-color)] transition-colors'
       >
-        {highlight ? 'Не цитировать' : 'Цитировать'}
+        {highlight ? 'Отменить цитирование' : 'Цитировать'}
       </button>
-      {quotedMessage && (
-        <blockquote className='block text-lime-400' onClick={onQuotedMessageClick}>
-          &gt; "{quotedMessage.content}" - {quotedMessage.author}
-        </blockquote>
-      )}
       <img src={message.image} className='max-h-48 block' />
     </li>
   );

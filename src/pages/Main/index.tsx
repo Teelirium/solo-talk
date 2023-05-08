@@ -13,8 +13,9 @@ export default function Main() {
     resolver: zodResolver(chatFormDtoSchema),
   });
 
-  const addChatMutation = useAddChatMutation(() => {
+  const addChatMutation = useAddChatMutation((newChat) => {
     reset();
+    nav(`chat/${newChat.id}`);
   });
 
   const onSubmit = handleSubmit((data) => {
@@ -30,10 +31,16 @@ export default function Main() {
         </h2>
       </header>
       <main className='relative layout p-4 flex flex-col overflow-hidden'>
-        <ul className='flex flex-col gap-4 h-screen'>
+        <ul className='flex flex-col gap-2 h-screen'>
           {chatsQuery.isLoading && <li>Загрузка...</li>}
           {Object.entries(chats ?? {}).map(([id, chat]) => (
-            <li key={id} className='link text-xl '>
+            <li
+              key={id}
+              className={`link text-xl 
+              p-2 border rounded-lg 
+              transition-colors border-[color:var(--txt-color)] 
+              hover:text-accent-focus hover:border-accent-focus`}
+            >
               <Link to={`chat/${id}`}>
                 <h3>{chat.title}</h3>
               </Link>
@@ -44,12 +51,14 @@ export default function Main() {
           <input
             type='text'
             placeholder='Название нового чата'
+            autoComplete='off'
             className='input input-bordered w-full shrink-0'
             {...register('title')}
+            required
           />
           <button
             type='button'
-            className='btn btn-ghost text-neutral-content w-1/3'
+            className='btn btn-ghost w-1/3 opacity-70'
             onClick={() => {
               removeUser();
               nav('login');
@@ -57,7 +66,7 @@ export default function Main() {
           >
             Выйти
           </button>
-          <button type='submit' className='btn text-accent-content flex-1'>
+          <button type='submit' className='btn flex-1 dark:text-[color:var(--txt-color)]'>
             Создать новый чат
           </button>
         </form>

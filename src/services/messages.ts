@@ -66,10 +66,7 @@ export const useSendMessageMutation = (onSuccess?: () => void) => {
         return old;
       });
       onSuccess && onSuccess();
-    },
-
-    async onSettled(_, __, vars) {
-      // await queryClient.invalidateQueries(messagesQueryKey(vars.chatId));
+      await queryClient.invalidateQueries(messagesQueryKey(vars.chatId));
     },
   });
 };

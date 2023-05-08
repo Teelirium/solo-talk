@@ -1,4 +1,4 @@
-import { ChatFormDto, chatRecordDtoSchema } from '@/dto/chatDto';
+import { ChatDto, ChatFormDto, chatRecordDtoSchema } from '@/dto/chatDto';
 import { wait } from '@/util/wait';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { v4 } from 'uuid';
@@ -24,18 +24,20 @@ export const useChatsQuery = () =>
 async function addChat(chat: ChatFormDto) {
   const chats = await getChats();
   const id = v4();
-  chats[id] = { ...chat, id };
+  const newChat = { ...chat, id } satisfies ChatDto;
+  chats[id] = newChat;
   localStorage.setItem(key, JSON.stringify(chats));
+  return newChat;
 }
 
-export const useAddChatMutation = (onSuccess?: () => void) => {
+export const useAddChatMutation = (onSuccess?: (newChat: ChatDto) => void) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: addChat,
 
-    async onSuccess() {
+    async onSuccess(chat: ChatDto) {
       await queryClient.invalidateQueries(chatsQueryKey);
-      onSuccess && onSuccess();
+      onSuccess && onSuccess(chat);
     },
   });
 };

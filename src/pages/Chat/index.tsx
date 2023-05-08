@@ -113,7 +113,7 @@ export default function Chat() {
       </header>
       <main className='relative layout p-2 flex flex-col overflow-hidden'>
         <ul
-          className='flex flex-col-reverse overflow-y-auto h-screen p-2 py-0'
+          className='flex flex-col-reverse overflow-y-auto h-screen p-2 py-0 gap-1'
           ref={scrollContainer}
         >
           {showLoading && <li>Загрузка...</li>}
@@ -137,12 +137,15 @@ export default function Chat() {
           <input type='text' {...register('quotedMessage')} className='hidden' />
           <div className='form-control w-full'>
             <label className='label py-1' onClick={() => scrollToMessage(quotedMessageId ?? '')}>
-              {quotedMessage && <span className='label-text'>&gt; {quotedMessage.content}</span>}
+              {quotedMessage && (
+                <span className='label-text text-lg truncate'>&gt; {quotedMessage.content}</span>
+              )}
             </label>
             <input
               type='text'
               placeholder={`Написать в ${chat?.title ?? ''}`}
               className='input input-bordered w-full shrink-0'
+              autoComplete='no'
               {...register('content')}
             />
           </div>

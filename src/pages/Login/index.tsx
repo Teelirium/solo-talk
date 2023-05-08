@@ -34,7 +34,7 @@ export default function Login() {
           </button>
         </form>
       </main>
-      <span className='w-full h-full fixed flex justify-center items-center'>
+      <span className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
         <img className='animate-bounce' src={'/kotohime-pet.gif'} />
       </span>
     </>
