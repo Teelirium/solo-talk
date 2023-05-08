@@ -3,12 +3,14 @@
 ## Запуск
 
 ```
+npm i
 npm run dev
 ```
 
 или
 
 ```
+npm i
 npm run build
 npm run preview
 ```
