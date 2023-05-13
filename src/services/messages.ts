@@ -10,6 +10,7 @@ async function getMessages(chatId: string) {
   const messages = messageDtoSchema
     .array()
     .parse(JSON.parse(localStorage.getItem(getKey(chatId)) ?? '[]'));
+  console.log('Loaded messages for chat', chatId);
   return messages;
 }
 
@@ -18,7 +19,7 @@ export const useMessagesQuery = (chatId: string) =>
   useQuery({
     queryKey: messagesQueryKey(chatId),
     queryFn: () => getMessages(chatId),
-    // staleTime: 60 * 1000,
+    staleTime: 60 * 1000,
   });
 
 async function sendMessage({
@@ -42,13 +43,13 @@ async function sendMessage({
     author,
     image,
     quotedMessage,
-  };
+  } satisfies MessageDto;
   messages.unshift(newMessage);
   localStorage.setItem(getKey(chatId), JSON.stringify(messages));
   return newMessage;
 }
 
-export const useSendMessageMutation = (onSuccess?: () => void) => {
+export const useSendMessageMutation = (onSuccess?: (newMessage: MessageDto) => void) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -65,8 +66,8 @@ export const useSendMessageMutation = (onSuccess?: () => void) => {
         }
         return old;
       });
-      onSuccess && onSuccess();
-      await queryClient.invalidateQueries(messagesQueryKey(vars.chatId));
+      if (onSuccess) onSuccess(result);
+      // await queryClient.invalidateQueries(messagesQueryKey(vars.chatId));
     },
   });
 };

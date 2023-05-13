@@ -1,11 +1,12 @@
 import MessageView from '@/components/MessageView';
-import { MessageFormDto, messageFormDtoSchema } from '@/dto/messageDto';
+import { MessageDto, MessageFormDto, messageFormDtoSchema } from '@/dto/messageDto';
 import { useChatsQuery } from '@/services/chats';
-import { useMessagesQuery, useSendMessageMutation } from '@/services/messages';
+import { messagesQueryKey, useMessagesQuery, useSendMessageMutation } from '@/services/messages';
 import { getUser } from '@/services/user';
 import { wait } from '@/util/wait';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMemo, useRef } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useEffect, useMemo, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { z } from 'zod';
@@ -34,7 +35,9 @@ async function scrollToMessage(messageId: string) {
 
 export default function Chat() {
   const scrollContainer = useRef<HTMLUListElement>(null);
+  const messageChannel = useRef<BroadcastChannel | null>(null);
   const { hash } = useLocation();
+  const queryClient = useQueryClient();
   const { chatId } = paramSchema.parse(useParams());
 
   const { data: messages, ...messagesQuery } = useMessagesQuery(chatId);
@@ -58,11 +61,35 @@ export default function Chat() {
   const quotedMessageId = watch('quotedMessage');
   const quotedMessage = messageMap.get(quotedMessageId ?? '');
 
-  const { mutate, ...sendMessageMutation } = useSendMessageMutation(() => {
-    reset();
+  const { mutate, ...sendMessageMutation } = useSendMessageMutation((newMessage) => {
+    if (!messageChannel.current) return;
+    messageChannel.current.postMessage(newMessage);
   });
 
+  useEffect(() => {
+    messageChannel.current = new BroadcastChannel(chatId);
+    messageChannel.current.onmessage = (e: MessageEvent<MessageDto>) => {
+      console.log('Incoming message from', e.data.author);
+      queryClient.setQueryData<MessageDto[]>(messagesQueryKey(chatId), (old) => {
+        if (old) {
+          old.unshift(e.data);
+        }
+        return old;
+      });
+    };
+    console.log('Connected to chat', chatId);
+
+    const messageChannelCurrent = messageChannel.current;
+    return () => {
+      messageChannelCurrent.close();
+      console.log('Disconnected from chat', chatId);
+    };
+  }, [chatId, queryClient]);
+
   const onSubmit = handleSubmit(async (data) => {
+    console.log(data);
+    if (!messageChannel.current || !messages) return;
+
     let image: string | undefined = undefined;
     if (data.image.length > 0) {
       image = await toBase64(data.image[0]);
@@ -70,14 +97,17 @@ export default function Chat() {
     if (!data.content && !image) {
       return;
     }
-    mutate({
+
+    const newMessage = {
       chatId,
       content: data.content ?? '',
       image,
       author: getUser() ?? '',
       quotedMessage: data.quotedMessage,
-    });
+    } satisfies Parameters<typeof mutate>[0];
+    mutate(newMessage);
     scrollContainer.current?.scrollTo(0, 0);
+    reset();
   });
 
   const onQuoteClick = (msgId: string) => {
